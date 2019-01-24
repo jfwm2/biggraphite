@@ -1,1 +1,5 @@
+# Docker files
 */Dockerfile
+
+# Docker volume directories
+volumes_*

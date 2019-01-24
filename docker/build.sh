@@ -6,3 +6,4 @@ do
  docker build .. -t ${i} -f ${i}/Dockerfile
 done
 
+mkdir -p volumes_graphite-aggregator-cache/conf
