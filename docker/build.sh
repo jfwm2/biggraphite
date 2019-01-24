@@ -3,7 +3,6 @@
 for i in $(ls */Dockerfile | sed 's/\(.*\)\/.*/\1/');
 do
  mkdir -p volumes_${i}  
- docker build ${i} -t ${i}
+ docker build .. -t ${i} -f ${i}/Dockerfile
 done
 
-cp ../biggraphite/drivers/cassandra.py volumes_bg-cassandra/
