@@ -8,3 +8,5 @@ services:
     image: "bg-cassandra"
     ports:
       - "9042:9042"
+  graphite-aggregator-cache:
+    image: "graphite-aggregator-cache"
