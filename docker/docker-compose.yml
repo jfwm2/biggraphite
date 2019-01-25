@@ -12,3 +12,9 @@ services:
     image: "graphite-aggregator-cache"
     volumes:
       - "./volumes_graphite-aggregator-cache/conf:/conf"
+  graphite-web:
+    image: "graphite-web"
+    ports:
+      - "3032:3032"
+    volumes:
+      - "./volumes_web/conf:/conf"
