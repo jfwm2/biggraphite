@@ -29,7 +29,6 @@ EOF
 touch ${AGG_CONF}/storage-schemas.conf
 
 cat << EOF > ${WEB_CONF}/local_settings.py
-import os
 DEBUG = True
 LOG_DIR = '/tmp'
 STORAGE_DIR = '/tmp'
@@ -45,6 +44,4 @@ WEBAPP_DIR = '/usr/local/webapp/'
 BG_METADATA_DRIVER = 'elasticsearch'
 BG_ELASTICSEARCH_HOSTS = 'elasticsearch'
 BG_ELASTICSEARCH_PORT = '9200'
-# BG_ELASTICSEARCH_USERNAME = 'foo'
-# BG_ELASTICSEARCH_PASSWORD = 'bar'
 EOF
