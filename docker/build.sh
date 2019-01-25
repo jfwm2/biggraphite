@@ -45,3 +45,13 @@ BG_METADATA_DRIVER = 'elasticsearch'
 BG_ELASTICSEARCH_HOSTS = 'elasticsearch'
 BG_ELASTICSEARCH_PORT = '9200'
 EOF
+
+cat << EOF > ${WEB_CONF}/launch-graphite-web.sh
+#! /bin/bash
+
+cp /conf/local_settings.py /usr/local/lib/python3.6/site-packages/graphite/
+export DJANGO_SETTINGS_MODULE=graphite.settings
+django-admin migrate
+django-admin migrate --run-syncdb
+cd /usr/local/lib/python3.6/site-packages/graphite && run-graphite-devel-server.py /usr/local
+EOF
