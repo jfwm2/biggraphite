@@ -42,7 +42,7 @@ EOF
 build_graphite-web (){
   docker build .. -t graphite-web -f graphite-web/Dockerfile
 
-  mkdir -p ${AGG_WEB} volumes_graphite-web
+  mkdir -p ${WEB_CONF} volumes_graphite-web
 
   cat << EOF > ${WEB_CONF}/local_settings.py
 DEBUG = True
