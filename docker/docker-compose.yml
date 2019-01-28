@@ -4,6 +4,10 @@ services:
     image: "bg-elasticsearch"
     ports:
       - "9200:9200"
+  kibana:
+    image: "bg-kibana"
+    ports:
+      - "5601:5601"
   cassandra:
     image: "bg-cassandra"
   graphite-aggregator-cache:

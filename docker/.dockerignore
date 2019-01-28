@@ -1,5 +1,3 @@
-# Docker files
-*/Dockerfile
-
-# Docker volume directories
-volumes_*
+# ignore all change in current dir and below
+*
+**/*
