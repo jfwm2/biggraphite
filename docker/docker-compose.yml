@@ -15,8 +15,10 @@ services:
 #
   cassandra:
     image: "bg-cassandra"
+  helper:
+    image: "bg-helper"
     volumes:
-      - "./volumes_bg-cassandra/conf:/conf"
+      - "./volumes_bg-helper/conf:/conf"
     command: "/bin/bash /conf/bg-cassandra.sh"
 #
   graphite-aggregator-cache:

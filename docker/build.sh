@@ -1,22 +1,24 @@
 #! /bin/bash
 
-CAS_CONF=volumes_bg-cassandra/conf
+BGH_CONF=volumes_bg-helper/conf
 AGG_CONF=volumes_graphite-aggregator-cache/conf
 WEB_CONF=volumes_graphite-web/conf
 
 build_bg-cassandra (){
   docker build bg-cassandra -t bg-cassandra -f bg-cassandra/Dockerfile
+}
 
-  mkdir -p ${CAS_CONF}
+build_bg-helper (){
+  docker build bg-helper -t bg-helper -f bg-helper/Dockerfile
 
-  cat << EOF > ${CAS_CONF}/bg-cassandra.sh
+  mkdir -p ${BGH_CONF}
+
+  cat << EOF > ${BGH_CONF}/bg-cassandra.sh
 #! /bin/bash
 
-cassandra -R \
-&& while [ \$(cqlsh -e "USE biggraphite" || echo 1) ]; do sleep 0.5; cqlsh -e "CREATE KEYSPACE IF NOT EXISTS biggraphite WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'} AND durable_writes = false;"; done \
+while [ \$(cqlsh -e "USE biggraphite" cassandra --cqlversion="3.4.4" || echo 1) ]; do sleep 0.5; cqlsh -e "CREATE KEYSPACE IF NOT EXISTS biggraphite WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'} AND durable_writes = false;" cassandra --cqlversion="3.4.4"; done \
 && echo "biggraphite keyspace created" \
-&& cqlsh -e "DESCRIBE biggraphite" \
-&& tail -F /dev/null
+&& cqlsh -e "DESCRIBE biggraphite" cassandra --cqlversion="3.4.4"
 EOF
 }
 
@@ -90,6 +92,8 @@ build (){
   case ${1} in
     bg-cassandra)
       build_bg-cassandra ;;
+    bg-helper)
+      build_bg-helper ;;
     bg-elasticsearch)
       build_bg-elasticsearch ;;
     bg-kibana)
