@@ -1,10 +1,23 @@
 #! /bin/bash
 
+CAS_CONF=volumes_bg-cassandra/conf
 AGG_CONF=volumes_graphite-aggregator-cache/conf
 WEB_CONF=volumes_graphite-web/conf
 
 build_bg-cassandra (){
   docker build bg-cassandra -t bg-cassandra -f bg-cassandra/Dockerfile
+
+  mkdir -p ${CAS_CONF}
+
+  cat << EOF > ${CAS_CONF}/bg-cassandra.sh
+#! /bin/bash
+
+cassandra -R \
+&& while [ \$(cqlsh -e "USE biggraphite" || echo 1) ]; do sleep 0.5; cqlsh -e "CREATE KEYSPACE IF NOT EXISTS biggraphite WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'} AND durable_writes = false;"; done \
+&& echo "biggraphite keyspace created" \
+&& cqlsh -e "DESCRIBE biggraphite" \
+&& tail -F /dev/null
+EOF
 }
 
 build_bg-elasticsearch (){
@@ -18,7 +31,7 @@ build_bg-kibana (){
 build_graphite-aggregator-cache (){
   docker build .. -t graphite-aggregator-cache -f graphite-aggregator-cache/Dockerfile
 
-  mkdir -p ${AGG_CONF} volumes_graphite-aggregator-cache
+  mkdir -p ${AGG_CONF}
 
   cat << EOF > ${AGG_CONF}/carbon.conf
 [cache]
@@ -42,7 +55,7 @@ EOF
 build_graphite-web (){
   docker build .. -t graphite-web -f graphite-web/Dockerfile
 
-  mkdir -p ${WEB_CONF} volumes_graphite-web
+  mkdir -p ${WEB_CONF}
 
   cat << EOF > ${WEB_CONF}/local_settings.py
 DEBUG = True
@@ -91,7 +104,8 @@ build (){
 }
 
 usage (){
-  echo "usage: $(basename ${0} \[dir1 \[dir2 ..\]\])"
+  echo "usage: $(basename ${0}) [dir1_containing_DockerFile [dir2_containing_DockerFile ..]]"
+  echo "with no argument it builds all image defined in directories containing a DockerFile"
   exit 1
 }
 
@@ -103,7 +117,7 @@ if [ -z "${1}" ]; then
   done
 else
   while (( "$#" )); do
-    TMP="${TMP} ${1}"
+    TMP="${TMP} ${1%/}"
     shift
   done
 fi
